@@ -1,0 +1,22 @@
+includes:
+  - base.yaml
+
+targets:
+  - target: /bin
+    copy:
+      - files:
+          - ../bin/tee_enclave_service
+
+  - target: /etc
+    copy:
+      - files:
+          - /etc/hosts
+          - /etc/resolv.conf
+
+  - target: /var/lib/tee-a
+    mkdirs:
+      - state
+
+  - target: /var/lib/tee-b
+    mkdirs:
+      - state

@@ -1,0 +1,82 @@
+{
+  "resource_limits": {
+    "kernel_space_heap_size": "64MB",
+    "kernel_space_stack_size": "2MB",
+    "user_space_size": "1024MB",
+    "max_num_of_threads": 16
+  },
+  "process": {
+    "default_stack_size": "4MB",
+    "default_heap_size": "64MB",
+    "default_mmap_size": "512MB"
+  },
+  "entry_points": [
+    "/bin",
+    "/bin/tee_enclave_service"
+  ],
+  "env": {
+    "default": [
+      "OCCLUM=yes",
+      "LD_LIBRARY_PATH=/opt/occlum/glibc/lib",
+      "TEE_ENCLAVE_ADDR=:18080",
+      "TEE_NODE_ROLE=source"
+    ],
+    "untrusted": [
+      "TEE_ENCLAVE_ADDR",
+      "TEE_NODE_ROLE",
+      "TEE_NODE_ID",
+      "TEE_PEER_ALLOWLIST",
+      "TEE_ENCLAVE_STATE_PATH",
+      "TEE_ENCLAVE_SEAL_KEY"
+    ]
+  },
+  "metadata": {
+    "product_id": 1,
+    "version_number": 1,
+    "debuggable": true,
+    "enable_kss": false,
+    "family_id": {
+      "high": "0x0",
+      "low": "0x0"
+    },
+    "ext_prod_id": {
+      "high": "0x0",
+      "low": "0x0"
+    }
+  },
+  "feature": {
+    "amx": 0,
+    "pkru": 0,
+    "io_uring": 0,
+    "enable_edmm": false,
+    "enable_posix_shm": false
+  },
+  "mount": [
+    {
+      "target": "/",
+      "type": "unionfs",
+      "options": {
+        "layers": [
+          {
+            "target": "/",
+            "type": "sefs",
+            "source": "./build/mount/__ROOT",
+            "options": {
+              "MAC": ""
+            }
+          },
+          {
+            "target": "/",
+            "type": "sefs",
+            "source": "./run/mount/__ROOT"
+          }
+        ]
+      }
+    },
+    {
+      "target": "/host",
+      "type": "hostfs",
+      "source": "."
+    }
+  ]
+}
