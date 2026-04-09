@@ -33,8 +33,8 @@ cp -a "${INSTANCE_SRC}" "${PKG_DIR}/tee-b-instance"
 cat > "${PKG_DIR}/remote.env" <<EOF
 # Remote deploy env
 ORIGIN_SERVER_IP=${ORIGIN_SERVER_IP}
-CHAIN_SERVER_IP=172.27.20.237
-PEER_TEE_IP=172.27.20.236
+CHAIN_SERVER_IP=chain.example.internal
+PEER_TEE_IP=tee-peer.example.internal
 TEE_A_ADDR=:18080
 TEE_B_ADDR=:19080
 TEE_A_STATE=state/tee-a/state.sealed
@@ -43,10 +43,10 @@ TEE_A_SEAL_KEY=change-me-tee-a-seal-key
 TEE_B_SEAL_KEY=change-me-tee-b-seal-key
 TDID_T3_NO_SESSION_BASELINE=0
 
-# chain endpoint examples (same subnet)
-FISCO_RPC=http://172.27.20.237:8545
-FABRIC_RPC=http://172.27.20.237:7050
-AUDIT_RPC=http://172.27.20.237:9000
+# chain endpoint examples
+FISCO_RPC=http://chain.example.internal:8545
+FABRIC_RPC=http://chain.example.internal:7050
+AUDIT_RPC=http://chain.example.internal:9000
 EOF
 
 cat > "${PKG_DIR}/start-tee-b.sh" <<'EOF'
@@ -182,20 +182,20 @@ cat > "${PKG_DIR}/README.md" <<'EOF'
 # TDID Remote Minimal Bundle
 
 ## Purpose
-- Run both TEE-B and TEE-A on another TEE server (Occlum installed).
-- Keep communication path to origin server and chain subnet endpoints.
+- Run both TEE-B and TEE-A on another TEE server with Occlum installed.
+- Keep communication paths to the origin server and chain endpoints configurable.
 
 ## Files
 - `tee-a-instance/`, `tee-b-instance/`: Occlum instances (first startup will rebuild locally)
 - `remote.env`: runtime config
 - `start-tee-b.sh`, `start-tee-a.sh`: single-node startup
 - `run-dual.sh`: start B then A
-- `check-connectivity.sh`: subnet connectivity checks
+- `check-connectivity.sh`: endpoint connectivity checks
 
 ## On remote server
-0. ask 236 operator to start probe services first (`./start-origin-probes.sh` in `~/TDID-Final/deploy`)
-1. unpack tar.gz
-2. edit `remote.env` (set chain endpoints and origin server ip if needed; `TDID_T3_NO_SESSION_BASELINE=1` 可打开 T3 no-session 运行态)
+0. make sure any required upstream probe services are already running
+1. unpack the tar.gz bundle
+2. edit `remote.env` and set real hostnames, endpoints, and optional baseline toggles
 3. run: `chmod +x *.sh && ./check-connectivity.sh`
 4. run: `./run-dual.sh`
 
@@ -212,3 +212,4 @@ tar -C "${BUNDLE_DIR}" -czf "${TAR_PATH}" "tdid-remote-minimal"
 
 echo "bundle created: ${TAR_PATH}"
 echo "bundle dir: ${PKG_DIR}"
+
