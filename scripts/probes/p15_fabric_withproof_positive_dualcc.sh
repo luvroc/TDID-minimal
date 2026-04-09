@@ -1,19 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="${ROOT_DIR:-/home/ecs-user}"
+ROOT_DIR="${ROOT_DIR:-$HOME}"
 TDID_DIR="${TDID_DIR:-${ROOT_DIR}/TDID}"
-FABRIC_NET_DIR="${FABRIC_NET_DIR:-${ROOT_DIR}/chain-DOT/test-network}"
+CHAIN_DOT_HOME="${CHAIN_DOT_HOME:-${ROOT_DIR}/chain-DOT}"
+FABRIC_NET_DIR="${FABRIC_NET_DIR:-${CHAIN_DOT_HOME}/test-network}"
 CHANNEL_NAME="${CHANNEL_NAME:-mychannel}"
 SRC_CC="${SRC_CC:-gatewaycc}"
 DST_CC="${DST_CC:-gatewaycc_target}"
 
 cd "${FABRIC_NET_DIR}"
-export PATH="/usr/local/go/bin:/home/ecs-user/chain-DOT/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+export PATH="/usr/local/go/bin:${CHAIN_DOT_HOME}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 export OVERRIDE_ORG=""
 export VERBOSE="false"
-export TEST_NETWORK_HOME="${FABRIC_NET_DIR}"
-export FABRIC_CFG_PATH="/home/ecs-user/chain-DOT/config"
+export TEST_NETWORK_HOME="${CHAIN_DOT_HOME}/test-network"
+export FABRIC_CFG_PATH="${CHAIN_DOT_HOME}/config"
 source scripts/envVar.sh
 setGlobals 1
 

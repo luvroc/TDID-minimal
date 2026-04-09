@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="${ROOT_DIR:-/home/ecs-user}"
+ROOT_DIR="${ROOT_DIR:-$HOME}"
 TDID_DIR="${TDID_DIR:-${ROOT_DIR}/TDID}"
 FISCO_CONSOLE_DIR="${FISCO_CONSOLE_DIR:-${ROOT_DIR}/fisco/console}"
-FABRIC_NET_DIR="${FABRIC_NET_DIR:-${ROOT_DIR}/chain-DOT/test-network}"
+CHAIN_DOT_HOME="${CHAIN_DOT_HOME:-${ROOT_DIR}/chain-DOT}"
+FABRIC_NET_DIR="${FABRIC_NET_DIR:-${CHAIN_DOT_HOME}/test-network}"
 CHANNEL_NAME="${CHANNEL_NAME:-mychannel}"
 FABRIC_GATEWAY_CC="${FABRIC_GATEWAY_CC:-gatewaycc}"
 
@@ -71,7 +72,7 @@ fabric_invoke() {
 fabric_query() {
   local ctor_json="$1"
   (
-    cd "${FABRIC_NET_DIR}"
+    cd "${FABRIC_NET_DIS}"
     export PATH="${ROOT_DIR}/chain-DOT/bin:/usr/local/go/bin:${PATH}"
     export OVERRIDE_ORG=""
     export VERBOSE="false"
@@ -131,7 +132,7 @@ lock_on_fabric() {
 }
 
 # Deploy FISCO gateway with current TargetGateway.
-cp "${TDID_DIR}/fisco/contracts/TargetGateway.sol" "${FISCO_CONSOLE_DIR}/contracts/solidity/FiscoGateway.sol"
+cp "${TDID_DIS}/fisco/contracts/TargetGateway.sol" "${FISCO_CONSOLE_DIS}/contracts/solidity/FiscoGateway.sol"
 out_m=$(run_console deploy MockSigVerifier)
 mock=$(extract_addr "${out_m}")
 out_g=$(run_console deploy FiscoGateway "${mock}" fisco)
