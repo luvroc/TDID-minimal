@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd ~/chain-DOT/test-network
-export PATH="/home/ecs-user/chain-DOT/bin:/usr/local/go/bin:${PATH}"
+ROOT_DIR="${ROOT_DIR:-$HOME}"
+CHAIN_DOT_HOME="${CHAIN_DOT_HOME:-${ROOT_DIR}/chain-DOT}"
+cd "${CHAIN_DOT_HOME}/test-network"
+export PATH="${CHAIN_DOT_HOME}/bin:/usr/local/go/bin:${PATH}"
 export OVERRIDE_ORG=""
 export VERBOSE="false"
-export TEST_NETWORK_HOME="/home/ecs-user/chain-DOT/test-network"
-export FABRIC_CFG_PATH="/home/ecs-user/chain-DOT/config"
+export TEST_NETWORK_HOME="${CHAIN_DOT_HOME}/test-network"
+export FABRIC_CFG_PATH="${CHAIN_DOT_HOME}/config"
 source scripts/envVar.sh
 setGlobals 1
 
