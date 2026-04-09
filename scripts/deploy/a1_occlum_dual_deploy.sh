@@ -5,9 +5,9 @@ set -euo pipefail
 # Defaults align with deploy/remote-tee-dual-eval.sh conventions.
 
 REMOTE_USER="${REMOTE_USER:-ecs-user}"
-HOSTS_CSV="${HOSTS_CSV:-172.27.20.236,172.27.20.238}"
-REMOTE_REPO_DIR="${REMOTE_REPO_DIR:-/home/${REMOTE_USER}/TDID-Final}"
-REMOTE_MINIMAL_DIR="${REMOTE_MINIMAL_DIR:-/home/${REMOTE_USER}/tdid-remote-minimal}"
+HOSTS_CSV="${HOSTS_CSV:-tee-a.example.internal,tee-b.example.internal}"
+REMOTE_REPO_DIR="${REMOTE_REPO_DIR:-/opt/tdid/tdid-open-minimal/tee}"
+REMOTE_MINIMAL_DIR="${REMOTE_MINIMAL_DIR:-/opt/tdid/tdid-remote-minimal}"
 OCCLUM_BIN="${OCCLUM_BIN:-/opt/occlum/build/bin/occlum}"
 OCCLUM_GO="${OCCLUM_GO:-/opt/occlum/toolchains/golang/bin/occlum-go}"
 INSTANCE_DIR="${INSTANCE_DIR:-${REMOTE_REPO_DIR}/enclave/occlum/instance}"
@@ -134,7 +134,7 @@ deploy_one() {
 main() {
   IFS=',' read -r -a hosts <<< "${HOSTS_CSV}"
   if [[ "${#hosts[@]}" -lt 1 ]]; then
-    echo "HOSTS_CSV must include at least one host, e.g. 172.27.20.236,172.27.20.238" >&2
+    echo "HOSTS_CSV must include at least one host, e.g. tee-a.example.internal,tee-b.example.internal" >&2
     exit 1
   fi
 
