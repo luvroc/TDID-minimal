@@ -1,11 +1,11 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 
 set -euo pipefail
 
-ROOT_DIR="/home/ecs-user"
-TDID_DIR="${ROOT_DIR}/TDID"
-FISCO_CONSOLE_DIR="${ROOT_DIR}/fisco/console"
-PROOF_SIGNER_PRIVKEY="${PROOF_SIGNER_PRIVKEY:-59c6995e998f97a5a0044976f7d2cbb7d0c7f8f6ec6cf4de4df2f8f8b7f6d1f7}"
+ROOT_DIR="${ROOT_DIR:-$HOME}"
+TDID_DIR="${TDID_DIR:-${ROOT_DIR}/TDID}"
+FISCO_CONSOLE_DIR="${FISCO_CONSOLE_DIR:-${ROOT_DIR}/fisco/console}"
+PROOF_SIGNER_PRIVKEY="${PROOF_SIGNER_PRIVKEY:-}"
 
 if [[ $# -lt 1 ]]; then
   echo "Usage: $0 <gateway_addr>"
@@ -13,6 +13,11 @@ if [[ $# -lt 1 ]]; then
 fi
 
 GATEWAY_ADDR="$1"
+
+if [[ -z "${PROOF_SIGNER_PRIVKEY}" ]]; then
+  echo "PROOF_SIGNER_PRIVKEY must be set to a local test-only signer key"
+  exit 1
+fi
 
 mk_bytes32() {
   local input="$1"

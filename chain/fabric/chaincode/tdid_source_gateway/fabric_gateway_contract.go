@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -38,7 +39,7 @@ const (
 	keyVerifierChannelPrefx = "cfg:verifier:channel"
 
 	defaultVerifierCC = "mockverifiercc"
-	proofSignerPrivK  = "59c6995e998f97a5a0044976f7d2cbb7d0c7f8f6ec6cf4de4df2f8f8b7f6d1f7"
+	proofSignerPrivKEnv = "TDID_PROOF_SIGNER_PRIVKEY"
 	proofMaxAgeMillis = int64(10 * 60 * 1000)
 
 	// Proof metadata for paper-prototype semantics clarity.
@@ -787,7 +788,11 @@ func normalizeToBytes32Hex(input string) string {
 }
 
 func signSourceLockProofDigest(digestHex string) (string, error) {
-	priv, err := crypto.HexToECDSA(proofSignerPrivK)
+	privHex, err := loadProofSignerPrivK()
+	if err != nil {
+		return "", err
+	}
+	priv, err := crypto.HexToECDSA(privHex)
 	if err != nil {
 		return "", fmt.Errorf("invalid proof signer private key: %w", err)
 	}
@@ -804,11 +809,24 @@ func signSourceLockProofDigest(digestHex string) (string, error) {
 }
 
 func mustDefaultProofSignerAddress() string {
-	priv, err := crypto.HexToECDSA(proofSignerPrivK)
+	privHex, err := loadProofSignerPrivK()
+	if err != nil {
+		return "0x0000000000000000000000000000000000000000"
+	}
+	priv, err := crypto.HexToECDSA(privHex)
 	if err != nil {
 		return "0x0000000000000000000000000000000000000000"
 	}
 	return strings.ToLower(crypto.PubkeyToAddress(priv.PublicKey).Hex())
+}
+
+func loadProofSignerPrivK() (string, error) {
+	raw := strings.TrimSpace(os.Getenv(proofSignerPrivKEnv))
+	raw = strings.TrimPrefix(strings.TrimPrefix(raw, "0x"), "0X")
+	if raw == "" {
+		return "", fmt.Errorf("%s is required to build signed source-lock proofs", proofSignerPrivKEnv)
+	}
+	return raw, nil
 }
 
 func isHexString(v string) bool {

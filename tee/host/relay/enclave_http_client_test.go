@@ -87,3 +87,4 @@ func TestHTTPEnclaveClient_VerifyTargetExecutionEvidence_EnclaveReject(t *testin
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
+

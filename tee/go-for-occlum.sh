@@ -1,17 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
-THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null 2>&1 && pwd )"
+THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BUILD_DIR=/tmp/occlum_golang_toolchain
 INSTALL_DIR=/opt/occlum/toolchains/golang
 GO_BRANCH=${1:-"go1.18.4_for_occlum"}
 
-if ! command -v git > /dev/null 2>&1; then
+if ! command -v git >/dev/null 2>&1; then
   echo "git is required"
   exit 1
 fi
 
-if ! command -v go > /dev/null 2>&1; then
+if ! command -v go >/dev/null 2>&1; then
   echo "go is required for bootstrap"
   exit 1
 fi
@@ -33,7 +33,7 @@ cd ..
 
 sudo mv "${BUILD_DIR}" "${INSTALL_DIR}"
 
-sudo tee "${INSTALL_DIR}/bin/occlum-go" > /dev/null <<'EOF'
+sudo tee "${INSTALL_DIR}/bin/occlum-go" >/dev/null <<'EOF'
 #!/bin/bash
 set -e
 OCCLUM_GCC="${CC:-$(which occlum-gcc)}"

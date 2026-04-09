@@ -431,6 +431,8 @@ func verifyPeerAllowList(allowList []string, recoveredAddr string, keyID string,
 		}
 	}
 	if strictRules == 0 {
+		// Backward-compatible mode: legacy allowlist values (e.g. node names) are
+		// still enforced by mTLS CN on peer server interceptor.
 		return nil
 	}
 	return fmt.Errorf("peer identity is not in allowlist")
@@ -601,6 +603,7 @@ func decodeProofPayloadStruct(proof string) (proofPayloadFields, bool) {
 	raw := strings.TrimSpace(proof)
 	raw = strings.TrimPrefix(raw, "0x")
 	raw = strings.TrimPrefix(raw, "0X")
+	// layout from encode_source_lock_proof.py: 15 words (32 bytes each)
 	const hexLen = 15 * 64
 	if len(raw) != hexLen {
 		return proofPayloadFields{}, false
@@ -648,6 +651,7 @@ func (s *service) verifyPeerSessionBinding(ctx context.Context, req sharedtypes.
 	current, err := s.sessionMgr.CurrentSession(ctx)
 	if err != nil {
 		if err == tee.ErrSessionMissing {
+			// Backward compatibility: old deployment may not bind target session yet.
 			return nil
 		}
 		return fmt.Errorf("load current session failed: %w", err)

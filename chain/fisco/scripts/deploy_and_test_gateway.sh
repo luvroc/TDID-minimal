@@ -2,9 +2,10 @@
 
 set -euo pipefail
 
-ROOT_DIR="/home/ecs-user"
+ROOT_DIR="${ROOT_DIR:-$HOME}"
 TDID_DIR="${ROOT_DIR}/TDID"
-FABRIC_NET_DIR="${ROOT_DIR}/chain-DOT/test-network"
+CHAIN_DOT_HOME="${CHAIN_DOT_HOME:-${ROOT_DIR}/chain-DOT}"
+FABRIC_NET_DIR="${CHAIN_DOT_HOME}/test-network"
 FABRIC_CC_PATH="${TDID_DIR}/fabric/chaincode/tdid_source_gateway"
 FISCO_DIR="${ROOT_DIR}/fisco"
 FISCO_CONSOLE_DIR="${FISCO_DIR}/console"
@@ -49,7 +50,7 @@ fabric_invoke() {
     export OVERRIDE_ORG=""
     export VERBOSE="false"
     export TEST_NETWORK_HOME="${FABRIC_NET_DIR}"
-    export FABRIC_CFG_PATH="${ROOT_DIR}/chain-DOT/config"
+    export FABRIC_CFG_PATH="${FABRIC_NET_DIR}/../config"
     source scripts/envVar.sh
     setGlobals 1
     peer chaincode invoke \
@@ -71,7 +72,7 @@ fabric_query() {
     export OVERRIDE_ORG=""
     export VERBOSE="false"
     export TEST_NETWORK_HOME="${FABRIC_NET_DIR}"
-    export FABRIC_CFG_PATH="${ROOT_DIR}/chain-DOT/config"
+    export FABRIC_CFG_PATH="${FABRIC_NET_DIR}/../config"
     source scripts/envVar.sh
     setGlobals 1
     peer chaincode query -C "${CHANNEL_NAME}" -n "${CC_NAME}" -c "${ctor_json}"
@@ -79,19 +80,19 @@ fabric_query() {
 }
 
 deploy_fabric() {
-  log "[Fabric] start network"
+  log "[Fabric] 启动网络"
   (
     cd "${FABRIC_NET_DIR}"
     ./network.sh up
     if ! ./network.sh createChannel -c "${CHANNEL_NAME}"; then
-      log "[Fabric] channel ${CHANNEL_NAME} already exists, skip create"
+      log "[Fabric] 通道 ${CHANNEL_NAME} 已存在，跳过创建"
     fi
     ./network.sh deployCC -c "${CHANNEL_NAME}" -ccn "${CC_NAME}" -ccp "${FABRIC_CC_PATH}" -ccl go
   )
 }
 
 test_fabric() {
-  log "[Fabric] test SetBalance/Lock/Mint/Unlock/Burn"
+  log "[Fabric] 测试 SetBalance/Lock/Mint/Unlock/Burn"
 
   local lock_id="lock-${RUN_ID}"
   local mint_id="mint-${RUN_ID}"
@@ -129,33 +130,33 @@ test_fabric() {
   out_bal_b2=$(fabric_query '{"function":"GetBalance","Args":["bob","USDT"]}')
   assert_contains "${out_bal_b2}" "50" "Fabric bob balance after burn should be 50"
 
-  log "[Fabric] test passed"
+  log "[Fabric] 测试通过"
 }
 
 deploy_fisco() {
-  log "[FISCO] start nodes"
+  log "[FISCO] 启动节点"
   (
     cd "${FISCO_NODES_DIR}"
     bash start_all.sh || true
   )
 
-  log "[FISCO] prepare and deploy FiscoGateway.sol"
+  log "[FISCO] 准备并部署 FiscoGateway.sol"
   cp "${FISCO_SOL_SRC}" "${FISCO_SOL_DST}"
   deploy_out=$(run_fisco_console deploy FiscoGateway)
   echo "${deploy_out}" >/tmp/fisco_deploy_gateway.log
 
   FISCO_GATEWAY_ADDR=$(echo "${deploy_out}" | sed -n 's/.*contract address: \(0x[0-9a-fA-F]\+\).*/\1/p' | tail -n1)
   if [[ -z "${FISCO_GATEWAY_ADDR}" ]]; then
-    echo "FISCO deploy failed: gateway address not found"
+    echo "FISCO 部署失败，未解析到合约地址"
     echo "${deploy_out}"
     exit 1
   fi
   export FISCO_GATEWAY_ADDR
-  log "[FISCO] contract address: ${FISCO_GATEWAY_ADDR}"
+  log "[FISCO] 合约地址: ${FISCO_GATEWAY_ADDR}"
 }
 
 test_fisco() {
-  log "[FISCO] test setBalance/lock/mint/unlock/burn"
+  log "[FISCO] 测试 setBalance/lock/mint/unlock/burn"
 
   local lock_id="lock-${RUN_ID}"
   local mint_id="mint-${RUN_ID}"
@@ -195,16 +196,16 @@ test_fisco() {
   out_tx_mint=$(run_fisco_console call FiscoGateway "${FISCO_GATEWAY_ADDR}" getTxMeta "${mint_id}")
   assert_contains "${out_tx_mint}" "(true, MINT, MINTED" "FISCO mint tx status should be MINTED"
 
-  log "[FISCO] test passed"
+  log "[FISCO] 测试通过"
 }
 
 main() {
-  log "start deploying and testing gateway contract"
+  log "开始部署与测试网关合约"
   deploy_fabric
   test_fabric
   deploy_fisco
   test_fisco
-  log "all done: Fabric + FISCO gateway deployment and tests passed"
+  log "全部完成：Fabric + FISCO 网关合约部署与测试均通过"
 }
 
 main "$@"

@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd /home/ecs-user/fisco/console
+ROOT_DIR="${ROOT_DIR:-$HOME}"
+TDID_DIR="${TDID_DIR:-${ROOT_DIR}/TDID}"
+FISCO_CONSOLE_DIR="${FISCO_CONSOLE_DIR:-${ROOT_DIR}/fisco/console}"
+
+cd "${FISCO_CONSOLE_DIR}"
 
 run() { bash console.sh "$@"; }
 addr() { echo "$1" | sed -n 's/.*contract address: \(0x[0-9a-fA-F]\+\).*/\1/p' | tail -n1; }
@@ -26,7 +30,7 @@ payload_hex() {
 {"traceId":"$trace","transferId":"$transfer","sessionId":"$session","srcChainId":"fabric","lockState":"LOCKED","blockHeight":1,"txHash":"$(mk_b32 tx-$trace)","eventHash":"$(mk_b32 ev-$trace)","proofTimestamp":$pts,"attester":"$att","signer":"$sgn"}
 JSON
 )
-  python3 /home/ecs-user/TDID/fisco/scripts/encode_source_lock_proof.py "$js"
+  python3 "${TDID_DIR}/fisco/scripts/encode_source_lock_proof.py" "$js"
 }
 
 must_contain() {
@@ -38,7 +42,7 @@ must_not_contain() {
   [[ "$out" != *"$bad"* ]] || { echo "ASSERT FAIL: $hint"; echo "$out"; exit 1; }
 }
 
-cp /home/ecs-user/TDID/fisco/contracts/TargetGateway.sol /home/ecs-user/fisco/console/contracts/solidity/FiscoGateway.sol
+cp "${TDID_DIR}/fisco/contracts/TargetGateway.sol" "${FISCO_CONSOLE_DIR}/contracts/solidity/FiscoGateway.sol"
 mock_out=$(run deploy MockSigVerifier); mock=$(addr "$mock_out")
 gw_out=$(run deploy FiscoGateway "$mock" fisco); gw=$(addr "$gw_out")
 echo "gateway=$gw"

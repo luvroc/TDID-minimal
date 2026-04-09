@@ -72,7 +72,7 @@ fabric_invoke() {
 fabric_query() {
   local ctor_json="$1"
   (
-    cd "${FABRIC_NET_DIS}"
+    cd "${FABRIC_NET_DIR}"
     export PATH="${ROOT_DIR}/chain-DOT/bin:/usr/local/go/bin:${PATH}"
     export OVERRIDE_ORG=""
     export VERBOSE="false"
@@ -132,7 +132,7 @@ lock_on_fabric() {
 }
 
 # Deploy FISCO gateway with current TargetGateway.
-cp "${TDID_DIS}/fisco/contracts/TargetGateway.sol" "${FISCO_CONSOLE_DIS}/contracts/solidity/FiscoGateway.sol"
+cp "${TDID_DIR}/fisco/contracts/TargetGateway.sol" "${FISCO_CONSOLE_DIR}/contracts/solidity/FiscoGateway.sol"
 out_m=$(run_console deploy MockSigVerifier)
 mock=$(extract_addr "${out_m}")
 out_g=$(run_console deploy FiscoGateway "${mock}" fisco)

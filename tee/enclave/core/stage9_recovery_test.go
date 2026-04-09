@@ -90,6 +90,7 @@ func TestStage9_RestartRecoveryAndNonceContinuity(t *testing.T) {
 		t.Fatalf("sign lock B nonce=1 failed: %v", err)
 	}
 
+	// restart A only
 	svcARestart, err := NewService(Config{StatePath: statePathA, SealKey: sealKey, NodeID: "tee-a", Role: "source", PeerAllowList: []string{"tee-b"}})
 	if err != nil {
 		t.Fatalf("new service A restart failed: %v", err)

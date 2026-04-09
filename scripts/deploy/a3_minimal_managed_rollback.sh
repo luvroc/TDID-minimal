@@ -89,7 +89,7 @@ normalize_manifest() {
 
   get_val() {
     local key=\"\$1\"
-    awk -F= -v k=\"\${key}\" '\$1==k { print substr(\$0, index(\$0, "=")+1); exit }' \"\${mf}\"
+    awk -F= -v k=\"\${key}\" '\$1==k { print substr(\$0, index(\$0, \"=\")+1); exit }' \"\${mf}\"
   }
 
   strip_wrap() {

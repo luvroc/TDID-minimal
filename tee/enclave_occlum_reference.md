@@ -1,4 +1,4 @@
-# TEE Enclave Boundary Reference
+﻿# TEE Enclave Boundary Reference
 
 这份文档用于说明当前 `TDID-Final` 中哪些能力应放在 Occlum Enclave 内执行，哪些仍属于 host 侧职责。
 

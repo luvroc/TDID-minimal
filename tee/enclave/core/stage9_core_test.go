@@ -659,20 +659,20 @@ func makeProofPayloadHex(attester string, signer string) string {
 		return hex.EncodeToString(sum)
 	}
 	words := []string{
-		strings.Repeat("1", 64),
-		strings.Repeat("2", 64),
-		strings.Repeat("3", 64),
-		strings.Repeat("4", 64),
-		strings.Repeat("5", 64),
+		strings.Repeat("1", 64), // trace
+		strings.Repeat("2", 64), // transfer
+		strings.Repeat("3", 64), // session
+		strings.Repeat("4", 64), // srcChain
+		strings.Repeat("5", 64), // lockState
 		strings.Repeat("0", 63) + "1",
-		strings.Repeat("6", 64),
-		strings.Repeat("7", 64),
+		strings.Repeat("6", 64), // tx
+		strings.Repeat("7", 64), // event
 		strings.Repeat("0", 63) + "2",
 		toWord(attester),
 		toWord(signer),
-		strings.Repeat("8", 64),
-		strings.Repeat("9", 64),
-		strings.Repeat("a", 64),
+		strings.Repeat("8", 64), // proofDigest
+		strings.Repeat("9", 64), // sigR
+		strings.Repeat("a", 64), // sigS
 		strings.Repeat("0", 63) + "1",
 	}
 	return "0x" + strings.Join(words, "")

@@ -3,8 +3,8 @@ $ErrorActionPreference = "Stop"
 $ssh = "C:\Windows\System32\OpenSSH\ssh.exe"
 $scp = "C:\Windows\System32\OpenSSH\scp.exe"
 $RepoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-$ChainScript = Join-Path $RepoRoot "scripts\closeout\p1_closeout_chain.sh"
-$TeeScript = Join-Path $RepoRoot "scripts\closeout\p1_closeout_tee.sh"
+$ChainScript = Join-Path $RepoRoot "scripts\\closeout\\p1_closeout_chain.sh"
+$TeeScript = Join-Path $RepoRoot "scripts\\closeout\\p1_closeout_tee.sh"
 $ChainRemoteRoot = "/opt/tdid"
 $TeeRemoteRoot = "/opt/tdid"
 

@@ -2,9 +2,11 @@
 
 set -euo pipefail
 
-ROOT_DIR="/home/ecs-user"
+ROOT_DIR="${ROOT_DIR:-$HOME}"
 TDID_DIR="${ROOT_DIR}/TDID"
-FABRIC_NET_DIR="${ROOT_DIR}/chain-DOT/test-network"
+
+CHAIN_DOT_HOME="${CHAIN_DOT_HOME:-${ROOT_DIR}/chain-DOT}"
+FABRIC_NET_DIR="${CHAIN_DOT_HOME}/test-network"
 FABRIC_GATEWAY_PATH="${TDID_DIR}/fabric/chaincode/tdid_source_gateway"
 FABRIC_MOCK_VERIFIER_PATH="${TDID_DIR}/fabric/chaincode/common/mockverifier"
 
@@ -151,24 +153,26 @@ fabric_wait_trace_state() {
   return 1
 }
 
+# 审计链路已退役：保留函数名以兼容历史调用，但默认不执行。
 fabric_wait_audit_status() {
   log "[Fabric] audit chain retired: skip fabric_wait_audit_status"
   return 0
 }
 
 deploy_fabric_agent34() {
-  log "[Fabric] start network and deploy Agent3/4 chaincode"
+  log "[Fabric] 启动网络并部署 Agent3/4 链码"
   (
     cd "${FABRIC_NET_DIR}"
     ./network.sh up
     if ! ./network.sh createChannel -c "${CHANNEL_NAME}"; then
-      log "[Fabric] channel already exists, skip create"
+      log "[Fabric] 通道已存在，跳过创建"
     fi
 
     ROOT_DIR="${ROOT_DIR}" TDID_DIR="${TDID_DIR}" FABRIC_NET_DIR="${FABRIC_NET_DIR}" \
     CHANNEL_NAME="${CHANNEL_NAME}" CC_MOCK="${FABRIC_MOCK_CC}" CC_IDENTITY="${FABRIC_IDENTITY_CC}" \
     CC_SESSION="${FABRIC_SESSION_CC}" CC_GATEWAY="${FABRIC_GATEWAY_CC}" \
     bash "${TDID_DIR}/fabric/scripts/deploy-chaincodes.sh" all
+    # audit chain 已按白名单策略退役，此处不再部署 auditcc。
   )
 
   out_set=$(fabric_invoke "${FABRIC_GATEWAY_CC}" '{"function":"SetSigVerifier","Args":["mockverifiercc",""]}' 2>&1 || true)
@@ -176,7 +180,7 @@ deploy_fabric_agent34() {
 }
 
 test_fabric_agent3() {
-  log "[Fabric] test Agent3 state machine and anti-replay"
+  log "[Fabric] 测试 Agent3 状态机与防重放"
 
   local key_id="0x1111111111111111111111111111111111111111111111111111111111111111"
   local session_id="session-${RUN_ID}"
@@ -240,20 +244,21 @@ test_fabric_agent3() {
   q_refund=$(fabric_wait_trace_state "${trace_refund}" "REFUNDED" || true)
   assert_contains "${q_refund}" "REFUNDED" "Fabric refund trace state mismatch"
 
-  log "[Fabric] Agent3 test passed"
+  log "[Fabric] Agent3 测试通过"
 }
 
 test_fabric_agent4() {
+  # audit chain 逻辑保留为占位，默认不执行。
   if [[ "${ENABLE_AUDIT_CHAIN}" != "true" ]]; then
     log "[Fabric] Agent4 skipped: audit chain retired"
     return 0
   fi
 
-  log "[Fabric] Agent4 manual enable (compat mode)"
+  log "[Fabric] Agent4 手动启用（兼容模式）"
 }
 
 deploy_fisco_agent1234() {
-  log "[FISCO] start nodes and deploy Agent1/2/3/4 contracts"
+  log "[FISCO] 启动节点并部署 Agent1/2/3/4 相关合约"
   (
     cd "${FISCO_NODES_DIR}"
     bash start_all.sh || true
@@ -268,9 +273,7 @@ deploy_fisco_agent1234() {
 
   current=$(run_fisco_console getCurrentAccount)
   ADMIN_ADDR=$(echo "${current}" | sed -n 's/.*0x\([0-9a-fA-F]\{40\}\).*/0x\1/p' | tail -n1)
-  if [[ -z "${ADMIN_ADDR}" ]]; then
-    ADMIN_ADDR="0xc6ce842e5cf007efbf00fedbe70aea85c17e8c87"
-  fi
+  [[ -n "${ADMIN_ADDR}" ]] || { echo "Unable to determine FISCO admin account from console output"; echo "${current}"; exit 1; }
   export ADMIN_ADDR
 
   out_gov=$(run_fisco_console deploy GovernanceRoot "${ADMIN_ADDR}")
@@ -298,11 +301,11 @@ deploy_fisco_agent1234() {
   [[ -n "${FISCO_GATEWAY_ADDR}" ]] || { echo "Deploy FiscoGateway failed"; echo "${out_gateway}"; exit 1; }
 
   export GOV_ADDR TDID_ADDR SESS_ADDR SIG_ADDR MOCK_ADDR FISCO_GATEWAY_ADDR
-  log "[FISCO] deployed GOV=${GOV_ADDR} TDID=${TDID_ADDR} SESS=${SESS_ADDR} SIG=${SIG_ADDR} MOCK=${MOCK_ADDR} GATEWAY=${FISCO_GATEWAY_ADDR}"
+  log "[FISCO] 部署完成 GOV=${GOV_ADDR} TDID=${TDID_ADDR} SESS=${SESS_ADDR} SIG=${SIG_ADDR} MOCK=${MOCK_ADDR} GATEWAY=${FISCO_GATEWAY_ADDR}"
 }
 
 test_fisco_agent123() {
-  log "[FISCO] test Agent1/2 smoke + Agent3 state machine"
+  log "[FISCO] 测试 Agent1/2 烟雾 + Agent3 状态机"
 
   out_add_signer=$(run_fisco_console call GovernanceRoot "${GOV_ADDR}" addOrgSigner org1 "${ADMIN_ADDR}")
   assert_contains "${out_add_signer}" "transaction status: 0" "FISCO addOrgSigner failed"
@@ -379,27 +382,28 @@ test_fisco_agent123() {
   out_trace3=$(run_fisco_console call FiscoGateway "${FISCO_GATEWAY_ADDR}" getTrace "${trace3}")
   assert_contains "${out_trace3}" "REFUNDED" "FISCO trace3 state should be REFUNDED"
 
-  log "[FISCO] Agent1/2/3 test passed"
+  log "[FISCO] Agent1/2/3 测试通过（当前为可运行起始集）"
 }
 
 test_fisco_agent4() {
+  # audit chain 逻辑保留为占位，默认不执行。
   if [[ "${ENABLE_AUDIT_CHAIN}" != "true" ]]; then
     log "[FISCO] Agent4 skipped: audit chain retired"
     return 0
   fi
 
-  log "[FISCO] Agent4 manual enable (compat mode)"
+  log "[FISCO] Agent4 手动启用（兼容模式）"
 }
 
 main() {
-  log "start Agent1/2/3/4 integration test (focus Agent3+Agent4)"
+  log "开始执行 Agent1/2/3/4 联合测试（重点 Agent3+Agent4）"
   deploy_fabric_agent34
   test_fabric_agent3
   test_fabric_agent4
   deploy_fisco_agent1234
   test_fisco_agent123
   test_fisco_agent4
-  log "all done: Agent1/2/3/4 passed cross-chain dual-side test"
+  log "全部完成：Agent1/2/3/4 已完成并通过跨链双端测试"
 }
 
 main "$@"

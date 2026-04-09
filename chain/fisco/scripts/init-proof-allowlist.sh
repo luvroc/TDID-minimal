@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-ROOT_DIR="${ROOT_DIR:-/home/ecs-user}"
+ROOT_DIR="${ROOT_DIR:-$HOME}"
 FISCO_CONSOLE_DIR="${FISCO_CONSOLE_DIR:-${ROOT_DIR}/fisco/console}"
 
 GATEWAY_ADDR="${1:-}"

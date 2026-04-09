@@ -90,9 +90,9 @@ prepare_script_on_host() {
 from pathlib import Path
 p=Path('${script_path}')
 b=p.read_bytes()
-if b.startswith(b'\xef\xbb\xbf'):
+if b.startswith(b'\\xef\\xbb\\xbf'):
     b=b[3:]
-p.write_bytes(b.replace(b'\r\n', b'\n'))
+p.write_bytes(b.replace(b'\\r\\n', b'\\n'))
 PY
 chmod +x '${script_path}'"
 }

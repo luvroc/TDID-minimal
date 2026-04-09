@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-ROOT_DIR="${ROOT_DIR:-/home/ecs-user}"
-TDID_DIR="${ROOT_DIR:-${ROOT_DIR}/TDID}"
+ROOT_DIR="${ROOT_DIR:-$HOME}"
+TDID_DIR="${TDID_DIR:-${ROOT_DIR}/TDID}"
 FISCO_DIR="${FISCO_DIR:-${ROOT_DIR}/fisco}"
 FISCO_CONSOLE_DIR="${FISCO_CONSOLE_DIR:-${FISCO_DIR}/console}"
 FISCO_NODES_DIR="${FISCO_NODES_DIR:-${FISCO_DIR}/nodes/127.0.0.1}"
@@ -70,9 +70,7 @@ main() {
   local current admin_addr
   current="$(run_fisco_console getCurrentAccount)"
   admin_addr="$(echo "${current}" | sed -n 's/.*0x\([0-9a-fA-F]\{40\}\).*/0x\1/p' | tail -n1)"
-  if [[ -z "${admin_addr}" ]]; then
-    admin_addr="0xc6ce842e5cf007efbf00fedbe70aea85c17e8c87"
-  fi
+  [[ -n "${admin_addr}" ]] || { echo "Unable to determine FISCO admin account from console output"; echo "${current}"; exit 1; }
 
   log "Deploy GovernanceRoot"
   local out_gov gov_addr

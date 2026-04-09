@@ -2,9 +2,10 @@
 
 set -euo pipefail
 
-ROOT_DIR="${ROOT_DIR:-/home/ecs-user}"
-TDID_DIR="${ROOT_DIR:-${ROOT_DIR}/TDID}"
-FABRIC_NET_DIR="${FABRIC_NET_DIR:-${ROOT_DIR}/chain-DOT/test-network}"
+ROOT_DIR="${ROOT_DIR:-$HOME}"
+TDID_DIR="${TDID_DIR:-${ROOT_DIR}/TDID}"
+CHAIN_DOT_HOME="${CHAIN_DOT_HOME:-${ROOT_DIR}/chain-DOT}"
+FABRIC_NET_DIR="${FABRIC_NET_DIR:-${CHAIN_DOT_HOME}/test-network}"
 FISCO_CONSOLE_DIR="${FISCO_CONSOLE_DIR:-${ROOT_DIR}/fisco/console}"
 
 CHANNEL_NAME="${CHANNEL_NAME:-mychannel}"

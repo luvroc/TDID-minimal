@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null 2>&1 && pwd )"
-ROOT_DIR="$( cd "${THIS_DIR}/../.." > /dev/null 2>&1 && pwd )"
+THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+ROOT_DIR="$( cd "${THIS_DIR}/../.." >/dev/null 2>&1 && pwd )"
 
 OCCLUM_BIN="${OCCLUM_BIN:-$(command -v occlum || true)}"
 if [[ -z "${OCCLUM_BIN}" ]]; then
@@ -26,13 +26,13 @@ BIN_PATH="${BIN_DIR}/tee_enclave_service"
 
 mkdir -p "${BIN_DIR}"
 
-pushd "${ROOT_DIR}" > /dev/null
+pushd "${ROOT_DIR}" >/dev/null
 "${OCCLUM_GO}" build -o "${BIN_PATH}" ./enclave/cmd/tee_enclave_service
-popd > /dev/null
+popd >/dev/null
 
 rm -rf "${INSTANCE_DIR}"
 mkdir -p "${INSTANCE_DIR}"
-pushd "${INSTANCE_DIR}" > /dev/null
+pushd "${INSTANCE_DIR}" >/dev/null
 
 "${OCCLUM_BIN}" init
 cp -f "${THIS_DIR}/Occlum.json" ./Occlum.json
@@ -52,4 +52,4 @@ fi
 echo "[stage7] Occlum instance ready: ${INSTANCE_DIR}"
 echo "[stage7] Run with: cd ${INSTANCE_DIR} && ${OCCLUM_BIN} run /bin/tee_enclave_service"
 
-popd > /dev/null
+popd >/dev/null
