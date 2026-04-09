@@ -5,8 +5,8 @@ set -euo pipefail
 # Roll back managed/current and instance runtime to a specified release id.
 
 REMOTE_USER="${REMOTE_USER:-ecs-user}"
-HOSTS_CSV="${HOSTS_CSV:-172.27.20.236,172.27.20.238}"
-REMOTE_MINIMAL_DIR="${REMOTE_MINIMAL_DIR:-/home/${REMOTE_USER}/tdid-remote-minimal}"
+HOSTS_CSV="${HOSTS_CSV:-tee-a.example.internal,tee-b.example.internal}"
+REMOTE_MINIMAL_DIR="${REMOTE_MINIMAL_DIR:-/opt/tdid/tdid-remote-minimal}"
 OCCLUM_BIN="${OCCLUM_BIN:-/opt/occlum/build/bin/occlum}"
 TARGET_RELEASE_ID="${TARGET_RELEASE_ID:-}"
 REBUILD_INSTANCE="${REBUILD_INSTANCE:-1}"

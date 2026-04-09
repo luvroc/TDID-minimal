@@ -9,12 +9,12 @@ set -euo pipefail
 # 4) verify health and optionally run closeout
 
 REMOTE_USER="${REMOTE_USER:-ecs-user}"
-PRIMARY_HOST="${PRIMARY_HOST:-172.27.20.236}"
-SECONDARY_HOSTS_CSV="${SECONDARY_HOSTS_CSV:-172.27.20.238}"
+PRIMARY_HOST="${PRIMARY_HOST:-tee-a.example.internal}"
+SECONDARY_HOSTS_CSV="${SECONDARY_HOSTS_CSV:-tee-b.example.internal}"
 RELEASE_ID="${RELEASE_ID:-}"
 
-REMOTE_MINIMAL_DIR="${REMOTE_MINIMAL_DIR:-/home/${REMOTE_USER}/tdid-remote-minimal}"
-REMOTE_REPO_DIR="${REMOTE_REPO_DIR:-/home/${REMOTE_USER}/TDID-Final}"
+REMOTE_MINIMAL_DIR="${REMOTE_MINIMAL_DIR:-/opt/tdid/tdid-remote-minimal}"
+REMOTE_REPO_DIR="${REMOTE_REPO_DIR:-/opt/tdid/tdid-open-minimal/tee}"
 OCCLUM_BIN="${OCCLUM_BIN:-/opt/occlum/build/bin/occlum}"
 OCCLUM_GO="${OCCLUM_GO:-/opt/occlum/toolchains/golang/bin/occlum-go}"
 
@@ -85,7 +85,7 @@ prepare_script_on_host() {
     log "[dry-run] assume ${script_path} exists on ${host}"
     return
   fi
-  scp "B:\codex\a2_minimal_managed_release.sh" "${REMOTE_USER}@${host}:${script_path}"
+  scp "B:\\codex\\a2_minimal_managed_release.sh" "${REMOTE_USER}@${host}:${script_path}"
   ssh "${SSH_OPTS[@]}" "${REMOTE_USER}@${host}" "python3 - <<'PY'
 from pathlib import Path
 p=Path('${script_path}')
