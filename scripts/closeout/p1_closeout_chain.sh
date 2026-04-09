@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="${ROOT_DIR:-/home/ecs-user}"
+ROOT_DIR="${ROOT_DIR:-$HOME}"
 TDID_DIR="${TDID_DIR:-${ROOT_DIR}/TDID}"
+CHAIN_DOT_HOME="${CHAIN_DOT_HOME:-${ROOT_DIR}/chain-DOT}"
 
 log() {
   echo "[$(date +'%F %T')] $*"
 }
 
-export PATH="/usr/local/go/bin:/home/ecs-user/chain-DOT/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+export PATH="/usr/local/go/bin:${CHAIN_DOT_HOME}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 log "P1 closeout(chain): ensure gatewaycc_target deployed"
 cd "${TDID_DIR}"

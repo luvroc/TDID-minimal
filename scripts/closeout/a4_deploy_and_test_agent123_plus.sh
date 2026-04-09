@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="/home/ecs-user"
-TDID_DIR="${ROOT_DIR}/TDID"
+ROOT_DIR="${ROOT_DIR:-$HOME}"
+TDID_DIR="${TDID_DIR:-${ROOT_DIR}/TDID}"
 
 log() {
   echo "[$(date +'%F %T')] $*"
