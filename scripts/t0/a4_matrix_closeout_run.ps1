@@ -3,10 +3,10 @@ param(
   [string]$TeeHost = "tee",
   [string]$ChainUser = "ecs-user",
   [string]$TeeUser = "ecs-user",
-  [string]$ChainCloseoutScript = "/home/ecs-user/p1_closeout_chain.sh",
-  [string]$FiscoScript = "/home/ecs-user/verify_a4_mutex_fisco.sh",
-  [string]$FabricScript = "/home/ecs-user/verify_a4_mutex_fabric.sh",
-  [string]$TeeCloseoutScript = "/home/ecs-user/p1_closeout_tee.sh",
+  [string]$ChainCloseoutScript = "/opt/tdid/p1_closeout_chain.sh",
+  [string]$FiscoScript = "/opt/tdid/verify_a4_mutex_fisco.sh",
+  [string]$FabricScript = "/opt/tdid/verify_a4_mutex_fabric.sh",
+  [string]$TeeCloseoutScript = "/opt/tdid/p1_closeout_tee.sh",
   [string]$RunLegacyMutexSuites = "1"
 )
 

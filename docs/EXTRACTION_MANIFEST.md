@@ -3,8 +3,8 @@
 ## Source
 
 - extraction date: `2026-04-09`
-- tee source repo: `/home/ecs-user/TDID-Final` on `tee (8.140.63.70)`
-- chain source repo: `/home/ecs-user/TDID` on `chain (8.141.106.171)`
+- tee source repo: internal TEE-side prototype repository
+- chain source repo: internal chain-side prototype repository
 
 ## Selection rule
 

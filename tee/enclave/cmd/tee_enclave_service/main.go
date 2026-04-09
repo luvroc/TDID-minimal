@@ -293,10 +293,10 @@ func (a *app) remoteSummary() tee.RemoteChainContextSummary {
 }
 
 func loadRemoteContext(ctx context.Context) (*tee.RemoteChainContext, error) {
-	stateURL := envOrDefault("TEE_CHAIN_STATE_CONFIG_URL", "http://172.27.20.237:18081/v1/state/config/raw")
-	artifactURL := envOrDefault("TEE_CHAIN_ARTIFACT_INDEX_URL", "http://172.27.20.237:18081/v1/artifacts/index")
-	schemaURL := envOrDefault("TEE_EVENT_SCHEMA_URL", "http://172.27.20.237:18082/v1/events/schema")
-	exampleURL := envOrDefault("TEE_EVENT_EXAMPLE_URL", "http://172.27.20.237:18082/v1/events/example")
+	stateURL := envOrDefault("TEE_CHAIN_STATE_CONFIG_URL", "http://127.0.0.1:18081/v1/state/config/raw")
+	artifactURL := envOrDefault("TEE_CHAIN_ARTIFACT_INDEX_URL", "http://127.0.0.1:18081/v1/artifacts/index")
+	schemaURL := envOrDefault("TEE_EVENT_SCHEMA_URL", "http://127.0.0.1:18082/v1/events/schema")
+	exampleURL := envOrDefault("TEE_EVENT_EXAMPLE_URL", "http://127.0.0.1:18082/v1/events/example")
 	return tee.LoadRemoteChainContext(ctx, stateURL, artifactURL, schemaURL, exampleURL)
 }
 

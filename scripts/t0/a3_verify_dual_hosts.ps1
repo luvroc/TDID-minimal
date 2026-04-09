@@ -1,7 +1,7 @@
 param(
   [string]$JumpHost = "tee",
-  [string]$SecondaryHost = "172.27.20.238",
-  [string]$RemoteMinimalDir = "/home/ecs-user/tdid-remote-minimal"
+  [string]$SecondaryHost = "tee-b.example.internal",
+  [string]$RemoteMinimalDir = "/opt/tdid/tdid-remote-minimal"
 )
 
 $ErrorActionPreference = "Stop"

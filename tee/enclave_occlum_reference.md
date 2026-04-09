@@ -33,7 +33,7 @@
 ## 最小自检方式
 
 ```bash
-cd /home/ecs-user/TDID-Final
+cd /path/to/tdid-open-minimal/tee
 go test ./... -count=1
 ```
 

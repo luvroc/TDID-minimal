@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This repository is a trimmed open-source subset extracted from the current remote `TDID` and `TDID-Final` codebases.
+This repository is a trimmed open-source subset extracted from the current internal TDID prototype codebases.
 
 The extraction target is:
 
@@ -14,10 +14,10 @@ The extraction target is:
 ## Included Layout
 
 - `tee/`
-  - minimal TEE-side source snapshot from `/home/ecs-user/TDID-Final`
+  - minimal TEE-side source snapshot from the internal TEE-side prototype repo
   - includes `host/`, `shared/`, `enclave/api`, `enclave/core`, `enclave/cmd/tee_enclave_service`, and Occlum source config files
 - `chain/`
-  - minimal chain-side source snapshot from `/home/ecs-user/TDID`
+  - minimal chain-side source snapshot from the internal chain-side prototype repo
   - includes Fabric chaincodes, Fabric scripts/config, FISCO contracts/scripts, and `context-sharing.md`
 - `scripts/t0/`
   - the three serial `T0` baseline entrypoints
@@ -132,9 +132,8 @@ The stage-style startup flow on the original TEE server used:
 
 The chain-side scripts assume both Fabric and FISCO-BCOS are available.
 
-Relevant current references extracted from the running environment:
+Relevant configuration templates in this repository:
 
-- Fabric peer binary path used in practice: `/home/ecs-user/chain-DOT/bin/peer`
 - FISCO SDK config template: `chain/fisco/config/gosdk_config.toml`
 - FISCO RPC endpoints template: `chain/fisco/config/rpc_endpoints.env`
 - deployed contracts snapshot: `chain/fisco/config/deployed_contracts.json`
@@ -173,7 +172,7 @@ For Fabric, the extracted scripts expect:
 
 ## Practical Deployment Notes
 
-- Several scripts still assume the original remote layout under `/home/ecs-user`.
+- Several helper scripts still expect you to provide runtime-specific directories and endpoints through env files.
 - The public subset preserves the source and workflow logic, but not the full private deployment bundle.
 - If you want to make this repository self-contained for public users, the next cleanup step should be adding public config templates for `deploy/tee-a/config.env`, `deploy/tee-b/config.env`, and chain-side endpoint env files.
 
@@ -187,7 +186,7 @@ For Fabric, the extracted scripts expect:
 ## Notes
 
 - This is a source-oriented minimal open-source cut, not a turnkey private deployment mirror.
-- Some scripts still assume the original remote directory layout under `/home/ecs-user`.
+- Some helper scripts still need environment-specific directory values to be supplied explicitly.
 - Before publishing, you should do one final pass for credentials, internal IPs, and organization-specific naming.
 
 See `docs/T0_SCOPE.md` for the extraction rationale and scope.
