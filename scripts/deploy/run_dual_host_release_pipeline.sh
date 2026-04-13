@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# A3 dual-host managed release pipeline.
+# Dual-host managed release pipeline.
 # Purpose:
 # 1) build or select managed release on primary host
 # 2) promote artifact to secondary host(s)
@@ -30,6 +30,7 @@ REBUILD_INSTANCE="${REBUILD_INSTANCE:-1}"
 RESTART_SERVICES="${RESTART_SERVICES:-1}"
 RUN_CLOSEOUT_ON_PRIMARY="${RUN_CLOSEOUT_ON_PRIMARY:-1}"
 DRY_RUN="${DRY_RUN:-0}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 SSH_OPTS=(
   -o BatchMode=yes
@@ -41,7 +42,7 @@ SSH_OPTS=(
 )
 
 log() {
-  echo "[a3-dual-pipeline] $*"
+  echo "[dual-host-release] $*"
 }
 
 require() {
@@ -80,12 +81,12 @@ scp -o BatchMode=yes -o ConnectTimeout=10 '${src}' '${REMOTE_USER}@${secondary}:
 
 prepare_script_on_host() {
   local host="$1"
-  local script_path="/home/${REMOTE_USER}/a2_minimal_managed_release.sh"
+  local script_path="/home/${REMOTE_USER}/run_managed_release.sh"
   if [[ "${DRY_RUN}" == "1" ]]; then
     log "[dry-run] assume ${script_path} exists on ${host}"
     return
   fi
-  scp "B:\\codex\\a2_minimal_managed_release.sh" "${REMOTE_USER}@${host}:${script_path}"
+  scp "${SCRIPT_DIR}/run_managed_release.sh" "${REMOTE_USER}@${host}:${script_path}"
   ssh "${SSH_OPTS[@]}" "${REMOTE_USER}@${host}" "python3 - <<'PY'
 from pathlib import Path
 p=Path('${script_path}')
@@ -116,7 +117,7 @@ BUILD_OUTPUT_BASENAME='${BUILD_OUTPUT_BASENAME}' \
 BUILD_ENV='${BUILD_ENV}' \
 BUILD_CMD='${BUILD_CMD}' \
 EXPECTED_INTERPRETER='${EXPECTED_INTERPRETER}' \
-/home/${REMOTE_USER}/a2_minimal_managed_release.sh
+/home/${REMOTE_USER}/run_managed_release.sh
 "
   primary_cmd "${cmd}"
 }
@@ -140,7 +141,7 @@ BUILD_OUTPUT_BASENAME='${BUILD_OUTPUT_BASENAME}' \
 BUILD_ENV='${BUILD_ENV}' \
 BUILD_CMD='${BUILD_CMD}' \
 EXPECTED_INTERPRETER='${EXPECTED_INTERPRETER}' \
-/home/${REMOTE_USER}/a2_minimal_managed_release.sh
+/home/${REMOTE_USER}/run_managed_release.sh
 "
   run_remote "${secondary}" "${cmd}"
 }
@@ -175,7 +176,7 @@ echo '${host}: health ok'
 }
 
 closeout_primary() {
-  local cmd="bash /home/${REMOTE_USER}/p1_closeout_tee.sh"
+  local cmd="bash /home/${REMOTE_USER}/run_tee_closeout_suite.sh"
   primary_cmd "${cmd}"
 }
 

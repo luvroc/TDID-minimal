@@ -128,7 +128,7 @@ run_bridge() {
 
 lock_on_fabric() {
   local transfer="$1" session="$2" trace="$3" nonce="$4" exp_s="$5"
-  fabric_invoke "{\"function\":\"LockV2\",\"Args\":[\"${transfer}\",\"${session}\",\"${trace}\",\"fisco\",\"USDT\",\"10\",\"alice\",\"bob\",\"${KEY}\",\"${nonce}\",\"${exp_s}\",\"${SIG}\"]}" >/tmp/a4_fisco_fabric_lock.out
+  fabric_invoke "{\"function\":\"LockV2\",\"Args\":[\"${transfer}\",\"${session}\",\"${trace}\",\"fisco\",\"USDT\",\"10\",\"alice\",\"bob\",\"${KEY}\",\"${nonce}\",\"${exp_s}\",\"${SIG}\"]}" >/tmp/fisco_mutex_fabric_lock.out
 }
 
 # Deploy FISCO gateway with current TargetGateway.
@@ -144,9 +144,9 @@ KEY="0x1111111111111111111111111111111111111111111111111111111111111111"
 SIG="0x2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222"
 
 # 1) mint_then_refund_should_fail
-trace1="trace-a4-fisco-1-${RID}"
-transfer1="transfer-a4-fisco-1-${RID}"
-session1="session-a4-fisco-1-${RID}"
+trace1="trace-fisco-mutex-1-${RID}"
+transfer1="transfer-fisco-mutex-1-${RID}"
+session1="session-fisco-mutex-1-${RID}"
 trace1_b32=$(mk_b32 "${trace1}")
 transfer1_b32=$(mk_b32 "${transfer1}")
 session1_b32=$(mk_b32 "${session1}")
@@ -166,9 +166,9 @@ echo "${refund_after_mint}"
 must_not_contain "${refund_after_mint}" "transaction status: 0" "refund must fail after mint"
 
 # 2) refund_then_mint_should_fail
-trace2="trace-a4-fisco-2-${RID}"
-transfer2="transfer-a4-fisco-2-${RID}"
-session2="session-a4-fisco-2-${RID}"
+trace2="trace-fisco-mutex-2-${RID}"
+transfer2="transfer-fisco-mutex-2-${RID}"
+session2="session-fisco-mutex-2-${RID}"
 trace2_b32=$(mk_b32 "${trace2}")
 transfer2_b32=$(mk_b32 "${transfer2}")
 session2_b32=$(mk_b32 "${session2}")
@@ -213,4 +213,4 @@ neg3=$(run_console call FiscoGateway "${GW}" mintOrUnlockWithProof "${payload}" 
 echo "${neg3}"
 must_not_contain "${neg3}" "transaction status: 0" "tampered/stale proof must fail"
 
-echo "A4_FISCO_MUTEX: PASS"
+echo "FISCO_MUTEX_GUARDS: PASS"

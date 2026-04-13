@@ -15,9 +15,9 @@ setGlobals 1
 CC=gatewaycc
 CH=mychannel
 RID=$(date +%s)
-TRACE="trace-p15-fabric-${RID}"
-TRANSFER="transfer-p15-fabric-${RID}"
-SESSION="session-p15-fabric-${RID}"
+TRACE="trace-fabric-proof-call-${RID}"
+TRANSFER="transfer-fabric-proof-call-${RID}"
+SESSION="session-fabric-proof-call-${RID}"
 KEY="0x1111111111111111111111111111111111111111111111111111111111111111"
 SIG="0x2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222"
 EXP=$(( $(date +%s) + 3600 ))
@@ -48,8 +48,8 @@ OUT=$(invoke "{\"function\":\"MintOrUnlockWithProof\",\"Args\":[\"$TRANSFER\",\"
 echo "$OUT"
 
 if [[ "$OUT" == *"transferId already exists"* || "$OUT" == *"traceId already mapped"* || "$OUT" == *"proof signer mismatch"* || "$OUT" == *"proof digest mismatch"* ]]; then
-  echo "P15_FABRIC_WITHPROOF_CALL: PASS"
+  echo "FABRIC_WITH_PROOF_CALL_PATH: PASS"
   exit 0
 fi
 
-echo "P15_FABRIC_WITHPROOF_CALL: UNKNOWN"
+echo "FABRIC_WITH_PROOF_CALL_PATH: UNKNOWN"

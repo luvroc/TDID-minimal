@@ -12,7 +12,7 @@ This public subset keeps:
 
 - the current prototype source path on the TEE side
 - the current contracts / chaincodes and related deployment scripts on the chain side
-- the `T0` serial baseline workflow and its direct helper scripts
+- the serial baseline workflow and its direct helper scripts
 - `context-sharing` materials for later follow-up development
 
 This public subset excludes:

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# A1 unified Occlum deployment helper for two TEE hosts.
+# Unified Occlum deployment helper for two TEE hosts.
 # Defaults align with deploy/remote-tee-dual-eval.sh conventions.
 
 REMOTE_USER="${REMOTE_USER:-ecs-user}"
@@ -23,7 +23,7 @@ SSH_OPTS=(
 )
 
 log() {
-  echo "[a1-occlum-dual] $*"
+  echo "[dual-occlum-deploy] $*"
 }
 
 run_host() {

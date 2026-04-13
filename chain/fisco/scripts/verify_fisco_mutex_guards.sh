@@ -60,11 +60,11 @@ rid=$(date +%s)
 now_ms=$(date +%s%3N)
 
 echo "==== mint_then_refund_should_fail ===="
-trace1=$(mk_b32 "a4-fisco-trace-1-$rid")
-transfer1=$(mk_b32 "a4-fisco-transfer-1-$rid")
-session1=$(mk_b32 "a4-fisco-session-1-$rid")
-p1=$(payload_hex "$trace1" "$transfer1" "$session1" "$now_ms" "$attester_txt" "$signer_txt")
-mint1=$(run call FiscoGateway "$gw" mintOrUnlockWithProof "$p1" "$key" 7001 $((now_ms+600000)) "$sig" 2>&1 || true)
+trace1=$(mk_b32 "fisco-mutex-trace-1-$rid")
+transfer1=$(mk_b32 "fisco-mutex-transfer-1-$rid")
+session1=$(mk_b32 "fisco-mutex-session-1-$rid")
+payload1=$(payload_hex "$trace1" "$transfer1" "$session1" "$now_ms" "$attester_txt" "$signer_txt")
+mint1=$(run call FiscoGateway "$gw" mintOrUnlockWithProof "$payload1" "$key" 7001 $((now_ms+600000)) "$sig" 2>&1 || true)
 echo "$mint1"
 must_contain "$mint1" "transaction status: 0" "mint should succeed"
 refund_after_mint=$(run call FiscoGateway "$gw" refundV2 "$trace1" "$key" 2>&1 || true)
@@ -72,9 +72,9 @@ echo "$refund_after_mint"
 must_not_contain "$refund_after_mint" "transaction status: 0" "refund must fail after mint"
 
 echo "==== refund_then_mint_should_fail ===="
-trace2=$(mk_b32 "a4-fisco-trace-2-$rid")
-transfer2=$(mk_b32 "a4-fisco-transfer-2-$rid")
-session2=$(mk_b32 "a4-fisco-session-2-$rid")
+trace2=$(mk_b32 "fisco-mutex-trace-2-$rid")
+transfer2=$(mk_b32 "fisco-mutex-transfer-2-$rid")
+session2=$(mk_b32 "fisco-mutex-session-2-$rid")
 now2_ms=$(date +%s%3N)
 lock2=$(run call FiscoGateway "$gw" lockV2 "$transfer2" "$session2" "$trace2" "$key" 7002 $((now2_ms+10000)) "$sig" 2>&1 || true)
 echo "$lock2"
@@ -83,16 +83,16 @@ sleep 12
 refund2=$(run call FiscoGateway "$gw" refundV2 "$trace2" "$key" 2>&1 || true)
 echo "$refund2"
 must_contain "$refund2" "transaction status: 0" "refund should succeed after expiry"
-p2=$(payload_hex "$trace2" "$transfer2" "$session2" "$now_ms" "$attester_txt" "$signer_txt")
-mint_after_refund=$(run call FiscoGateway "$gw" mintOrUnlockWithProof "$p2" "$key" 7003 $((now_ms+600000)) "$sig" 2>&1 || true)
+payload2=$(payload_hex "$trace2" "$transfer2" "$session2" "$now_ms" "$attester_txt" "$signer_txt")
+mint_after_refund=$(run call FiscoGateway "$gw" mintOrUnlockWithProof "$payload2" "$key" 7003 $((now_ms+600000)) "$sig" 2>&1 || true)
 echo "$mint_after_refund"
 must_not_contain "$mint_after_refund" "transaction status: 0" "mint must fail after refund"
 
 echo "==== stale_locked_proof_after_refund_should_fail ===="
 stale_pts=$((now_ms-720000))
-p3=$(payload_hex "$trace2" "$transfer2" "$session2" "$stale_pts" "$attester_txt" "$signer_txt")
-stale_after_refund=$(run call FiscoGateway "$gw" mintOrUnlockWithProof "$p3" "$key" 7004 $((now_ms+600000)) "$sig" 2>&1 || true)
+payload3=$(payload_hex "$trace2" "$transfer2" "$session2" "$stale_pts" "$attester_txt" "$signer_txt")
+stale_after_refund=$(run call FiscoGateway "$gw" mintOrUnlockWithProof "$payload3" "$key" 7004 $((now_ms+600000)) "$sig" 2>&1 || true)
 echo "$stale_after_refund"
 must_not_contain "$stale_after_refund" "transaction status: 0" "stale proof must fail"
 
-echo "A4_FISCO_MUTEX: PASS"
+echo "FISCO_MUTEX_GUARDS: PASS"

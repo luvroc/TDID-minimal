@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# A2 managed release pipeline for tdid-remote-minimal.
+# Managed release pipeline for tdid-remote-minimal.
 # Goal:
 # 1) template build params
 # 2) template loader/lib dependencies
@@ -43,7 +43,7 @@ SSH_OPTS=(
 )
 
 log() {
-  echo "[a2-managed-release] $*"
+  echo "[managed-release] $*"
 }
 
 run_host() {

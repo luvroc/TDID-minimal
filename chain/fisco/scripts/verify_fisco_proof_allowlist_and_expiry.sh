@@ -10,7 +10,7 @@ mock_addr=$(extract_addr "$out_mock")
 out_gw=$(run_console deploy FiscoGateway "$mock_addr" fisco)
 gw_addr=$(extract_addr "$out_gw")
 
-echo "[A2] mock=$mock_addr gateway=$gw_addr"
+echo "[fisco-proof-allowlist-expiry] mock=$mock_addr gateway=$gw_addr"
 
 mk_b32(){ python3 - <<'PY' "$1"
 from eth_hash.auto import keccak
@@ -39,28 +39,28 @@ exp=$((now+600000))
 sig=0x2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
 key=0x1111111111111111111111111111111111111111111111111111111111111111
 
-trace1=$(mk_b32 trace-a2-neg)
-transfer1=$(mk_b32 transfer-a2-neg)
-session1=$(mk_b32 session-a2-neg)
+trace1=$(mk_b32 trace-proof-allowlist-neg)
+transfer1=$(mk_b32 transfer-proof-allowlist-neg)
+session1=$(mk_b32 session-proof-allowlist-neg)
 payload1=$(build_payload "$trace1" "$transfer1" "$session1" bad-attester bad-signer "$now")
 out1=$(run_console call FiscoGateway "$gw_addr" mintOrUnlockWithProof "$payload1" "$key" 1001 "$exp" "$sig" || true)
-echo "[A2-NEG-ALLOWLIST] $out1"
+echo "[proof-allowlist-negative] $out1"
 
 att=$(mk_b32 temp-attester)
 sgn=$(mk_b32 temp-signer)
 run_console call FiscoGateway "$gw_addr" setProofAttester "$att" true >/dev/null
 run_console call FiscoGateway "$gw_addr" setProofSigner "$sgn" true >/dev/null
-trace2=$(mk_b32 trace-a2-pos)
-transfer2=$(mk_b32 transfer-a2-pos)
-session2=$(mk_b32 session-a2-pos)
+trace2=$(mk_b32 trace-proof-allowlist-pos)
+transfer2=$(mk_b32 transfer-proof-allowlist-pos)
+session2=$(mk_b32 session-proof-allowlist-pos)
 payload2=$(build_payload "$trace2" "$transfer2" "$session2" temp-attester temp-signer "$now")
 out2=$(run_console call FiscoGateway "$gw_addr" mintOrUnlockWithProof "$payload2" "$key" 1002 "$exp" "$sig" || true)
-echo "[A2-POS] $out2"
+echo "[proof-allowlist-positive] $out2"
 
 oldts=$((now-7200))
-trace3=$(mk_b32 trace-a2-expired)
-transfer3=$(mk_b32 transfer-a2-expired)
-session3=$(mk_b32 session-a2-expired)
+trace3=$(mk_b32 trace-proof-expired)
+transfer3=$(mk_b32 transfer-proof-expired)
+session3=$(mk_b32 session-proof-expired)
 payload3=$(build_payload "$trace3" "$transfer3" "$session3" temp-attester temp-signer "$oldts")
 out3=$(run_console call FiscoGateway "$gw_addr" mintOrUnlockWithProof "$payload3" "$key" 1003 "$exp" "$sig" || true)
-echo "[A2-NEG-EXPIRED] $out3"
+echo "[proof-expired-negative] $out3"

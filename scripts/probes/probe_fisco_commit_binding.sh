@@ -18,21 +18,21 @@ out_m=$(run deploy MockSigVerifier); m=$(addr "$out_m")
 out_g=$(run deploy FiscoGateway "$m" fisco); g=$(addr "$out_g")
 echo "gateway=$g"
 key=0x1111111111111111111111111111111111111111111111111111111111111111
-trace=$(mk_b32 a3-fisco-trace)
+trace=$(mk_b32 fisco-commit-binding-trace)
 sig=0x2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
 exp=9999999999999
 o1=$(run call FiscoGateway "$g" lock "$trace" "$key" 3001 "$exp" "$sig")
-echo "[A3-FISCO-LOCK] $o1"
+echo "[fisco-commit-binding:lock] $o1"
 o2_bad=$(run call FiscoGateway "$g" commitV2 "$trace" "$key" "" "" "" "" 2>&1 || true)
-echo "[A3-FISCO-COMMIT-EMPTY] $o2_bad"
+echo "[fisco-commit-binding:commit-empty] $o2_bad"
 o2=$(run call FiscoGateway "$g" commitV2 "$trace" "$key" "0xtargettx" "0xtargetreceipt" "fabric" "0xtargetchainhash")
-echo "[A3-FISCO-COMMIT] $o2"
+echo "[fisco-commit-binding:commit] $o2"
 o3=$(run call FiscoGateway "$g" getTrace "$trace")
-echo "[A3-FISCO-TRACE] $o3"
+echo "[fisco-commit-binding:trace] $o3"
 tid=$(run call FiscoGateway "$g" getTransferIdByTrace "$trace" | sed -n 's/.*(0x\([0-9a-fA-F]\{64\}\)).*/0x\1/p' | tail -n1)
 if [[ -n "${tid:-}" ]]; then
   o3b=$(run call FiscoGateway "$g" getCommitTargetBindingHash "$tid")
-  echo "[A3-FISCO-COMMIT-BINDING] $o3b"
+  echo "[fisco-commit-binding:binding-hash] $o3b"
 fi
 o4=$(run call FiscoGateway "$g" refundV2 "$trace" "$key" || true)
-echo "[A3-FISCO-REFUND-AFTER-COMMIT] $o4"
+echo "[fisco-commit-binding:refund-after-commit] $o4"

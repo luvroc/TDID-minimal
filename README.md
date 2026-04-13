@@ -7,7 +7,7 @@ This repository is a trimmed open-source subset extracted from the current inter
 The extraction target is:
 
 - keep the source code and contracts that represent the current TDID paper prototype
-- keep the minimum workflow needed to understand and replay the `T0` baseline
+- keep the minimum workflow needed to understand and replay the serial baseline
 - keep chain-side `context-sharing` materials for follow-up development
 - remove bulky deployment artifacts, local cluster state, packaged SDK bundles, built binaries, and environment-specific private material
 
@@ -19,24 +19,31 @@ The extraction target is:
 - `chain/`
   - minimal chain-side source snapshot from the internal chain-side prototype repo
   - includes Fabric chaincodes, Fabric scripts/config, FISCO contracts/scripts, and `context-sharing.md`
-- `scripts/t0/`
-  - the three serial `T0` baseline entrypoints
+- `scripts/baseline/`
+  - the three serial baseline entrypoints in Linux shell form
 - `scripts/closeout/`
-  - closeout scripts required by `T0`
+  - closeout scripts required by the serial baseline
 - `scripts/deploy/`
   - minimal remote bundle / managed release / rollback helpers
 - `scripts/probes/`
   - proof-path and mutex probes used by the closeout flow
 
-## T0 Baseline
+## Serial Baseline
 
-The `T0` baseline is the serial execution of:
+The serial baseline is the ordered execution of:
 
-1. `scripts/t0/a3_verify_dual_hosts.ps1`
-2. `scripts/t0/p1_closeout_run.ps1`
-3. `scripts/t0/a4_matrix_closeout_run.ps1`
+1. `scripts/baseline/verify_dual_hosts.sh`
+2. `scripts/baseline/run_crosschain_closeout.sh`
+3. `scripts/baseline/run_mutex_matrix_closeout.sh`
 
 This repository keeps the code and scripts most directly related to that baseline.
+
+The entrypoints are Linux shell scripts and assume:
+
+- `bash`
+- `ssh`
+- `scp`
+- reachable `chain` / `tee` hosts or equivalent SSH targets supplied through environment variables
 
 ## Deployment Prerequisites
 
@@ -181,7 +188,7 @@ For Fabric, the extracted scripts expect:
 - `.git/`, `artifacts/`, deployment outputs, packaged config packs
 - built Occlum instances and enclave binaries
 - local-only infra state and private environment wiring
-- large experimental byproducts not required to understand the prototype or replay `T0`
+- large experimental byproducts not required to understand the prototype or replay the serial baseline
 
 ## Notes
 
@@ -189,4 +196,4 @@ For Fabric, the extracted scripts expect:
 - Some helper scripts still need environment-specific directory values to be supplied explicitly.
 - Before publishing, you should do one final pass for credentials, internal IPs, and organization-specific naming.
 
-See `docs/T0_SCOPE.md` for the extraction rationale and scope.
+See `docs/BASELINE_SCOPE.md` for the extraction rationale and scope.

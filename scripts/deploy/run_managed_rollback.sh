@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# A3 managed rollback for tdid-remote-minimal.
+# Managed rollback for tdid-remote-minimal.
 # Roll back managed/current and instance runtime to a specified release id.
 
 REMOTE_USER="${REMOTE_USER:-ecs-user}"
@@ -24,7 +24,7 @@ SSH_OPTS=(
 )
 
 log() {
-  echo "[a3-managed-rollback] $*"
+  echo "[managed-rollback] $*"
 }
 
 is_local_host() {

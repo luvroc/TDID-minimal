@@ -13,7 +13,7 @@ extract_addr(){ echo "$1" | sed -n 's/.*contract address: \(0x[0-9a-fA-F]\+\).*/
 cp "${TDID_DIR}/fisco/contracts/TargetGateway.sol" "${FISCO_CONSOLE_DIR}/contracts/solidity/FiscoGateway.sol"
 out_m=$(run_console deploy MockSigVerifier); mock=$(extract_addr "$out_m")
 out_g=$(run_console deploy FiscoGateway "$mock" fisco); gw=$(extract_addr "$out_g")
-echo "[P1-2] gateway=$gw"
+echo "[proof-signature-check] gateway=$gw"
 
 cd "${FABRIC_NET_DIR}"
 export PATH="${ROOT_DIR}/chain-DOT/bin:/usr/local/go/bin:${PATH}"
@@ -39,7 +39,7 @@ peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.exa
   --waitForEvent --waitForEventTimeout 30s \
   -c "{\"function\":\"LockV2\",\"Args\":[\"$TRANSFER\",\"$SESSION\",\"$TRACE\",\"fisco\",\"USDT\",\"10\",\"alice\",\"bob\",\"$KEY\",\"$NONCE\",\"$EXP\",\"$SIG\"]}" >/tmp/proofsig_lock.out
 
-echo "[P1-2] lock trace=${TRACE}"
+echo "[proof-signature-check] lock trace=${TRACE}"
 bash "${TDID_DIR}/fisco/scripts/bridge-proof-to-fisco.sh" \
   --trace-id "$TRACE" \
   --gateway-addr "$gw" \
@@ -67,8 +67,8 @@ required={
 for k,v in required.items():
   got=obj.get(k,"")
   if got!=v:
-    raise SystemExit(f"[P1-2] proof meta mismatch: {k} expected={v} got={got}")
-print("[P1-2] proof meta check: PASS")
+    raise SystemExit(f"[proof-signature-check] proof meta mismatch: {k} expected={v} got={got}")
+print("[proof-signature-check] proof meta check: PASS")
 PY
 TAMPERED=$(python3 - <<'PY' "$PROOF_RAW"
 import json,sys
@@ -93,4 +93,4 @@ if [[ "$NEG_OUT" != *"proof signer mismatch"* && "$NEG_OUT" != *"proof signature
   exit 1
 fi
 
-echo "[P1-2] verify-proof-signature: PASS"
+echo "[proof-signature-check] verify-proof-signature: PASS"

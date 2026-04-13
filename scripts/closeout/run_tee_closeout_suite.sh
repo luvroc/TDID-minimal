@@ -10,13 +10,13 @@ log() {
 
 cd "${TEE_DIR}"
 
-log "P1 closeout(tee): run A4/Stage9/B3 relay tests"
-CC=/usr/bin/gcc /opt/occlum/toolchains/golang/bin/occlum-go test ./host/relay -run 'A4|Stage9|SourceWorker' -v
+log "tee closeout: run relay package regression and source-worker tests"
+CC=/usr/bin/gcc /opt/occlum/toolchains/golang/bin/occlum-go test ./host/relay -count=1 -v
 
-log "P1 closeout(tee): run VerifyPeerCrossMessage core tests"
+log "tee closeout: run VerifyPeerCrossMessage core tests"
 CC=/usr/bin/gcc /opt/occlum/toolchains/golang/bin/occlum-go test ./enclave/core -run VerifyPeerCrossMessage -v
 
-log "P1 closeout(tee): run host package regression"
+log "tee closeout: run host package regression"
 CC=/usr/bin/gcc /opt/occlum/toolchains/golang/bin/occlum-go test ./host/... -count=1
 
-log "P1 closeout(tee): PASS"
+log "tee closeout: PASS"

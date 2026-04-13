@@ -27,13 +27,13 @@ OUT=$(peer chaincode invoke \
 
 echo "$OUT"
 if [[ "$OUT" == *"MintOrUnlockWithProof"* && "$OUT" == *"not found"* ]]; then
-  echo "P15_FABRIC_WITHPROOF: MISSING"
+  echo "FABRIC_WITH_PROOF_AVAILABILITY: MISSING"
   exit 0
 fi
 
 if [[ "$OUT" == *"Incorrect number of arguments"* || "$OUT" == *"provided 0, expected"* || "$OUT" == *"incorrect number of params"* ]]; then
-  echo "P15_FABRIC_WITHPROOF: EXISTS_BUT_ARG_MISMATCH"
+  echo "FABRIC_WITH_PROOF_AVAILABILITY: EXISTS_BUT_ARG_MISMATCH"
   exit 0
 fi
 
-echo "P15_FABRIC_WITHPROOF: UNKNOWN"
+echo "FABRIC_WITH_PROOF_AVAILABILITY: UNKNOWN"

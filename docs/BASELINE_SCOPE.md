@@ -1,16 +1,16 @@
-# T0 Scope And Extraction Notes
+# Serial Baseline Scope And Extraction Notes
 
-## What T0 Means Here
+## What The Serial Baseline Means Here
 
-The local `T0` documentation fixes the experiment baseline as the serial pass of:
+The public baseline documentation fixes the baseline as the serial pass of:
 
-1. `a3_verify_dual_hosts.ps1`
-2. `p1_closeout_run.ps1`
-3. `a4_matrix_closeout_run.ps1`
+1. `verify_dual_hosts.sh`
+2. `run_crosschain_closeout.sh`
+3. `run_mutex_matrix_closeout.sh`
 
 So this minimal repository is organized around one question:
 
-> what is the smallest source set that still explains and supports the current `T0` baseline workflow?
+> what is the smallest source set that still explains and supports the current serial baseline workflow?
 
 ## What Was Kept
 
@@ -50,7 +50,7 @@ Reason:
 
 ### Workflow scripts
 
-- `scripts/t0/`
+- `scripts/baseline/`
 - `scripts/closeout/`
 - `scripts/deploy/`
 - `scripts/probes/`
@@ -68,12 +68,12 @@ Reason:
 
 ## Residual Caveats
 
-1. The current script set still reflects the private remote layout more than a polished public DX.
-2. Some Fabric / FISCO scripts may still require environment templates before public release.
-3. `tee2` is configured in local SSH aliases, but the open-source cut itself does not depend on that host being reachable.
+1. The current script set still reflects a managed remote workflow more than a polished public developer experience.
+2. Some Fabric / FISCO scripts still require environment templates before public release.
+3. The baseline entrypoints now run on Linux shell, but they still expect SSH-accessible remote hosts instead of a single-machine local sandbox.
 
 ## Recommended Next Step Before Publishing
 
-1. Run a grep pass for internal IPs and usernames.
-2. Replace hard-coded remote paths with repo-relative paths where practical.
+1. Run a final grep pass for internal IPs and usernames across Git history.
+2. Replace remote-host assumptions with a repo-local demo path where practical.
 3. Add a small top-level `Makefile` or `justfile` for public-facing build and test entrypoints.
